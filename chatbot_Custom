@@ -1,0 +1,76 @@
+Step01:
+
+🔧 Steps:
+	1. Create an OpenAI account: https://platform.openai.com
+	2. Get API Key.(https://platform.openai.com/api-keys)
+Step-by-Step: How to Get Your OpenAI API Key
+	1. Go to OpenAI’s Platform
+👉 https://platform.openai.com/
+	2. Sign in / Sign up
+		○ Use your Google account or email to create an OpenAI account if you don’t have one.
+	3. Go to API Keys Section
+		○ Once logged in, visit:
+👉 https://platform.openai.com/account/api-keys
+	4. Click “Create new secret key”
+		○ A new key will be generated.
+		○ Copy it immediately — you won’t be able to see it again.
+
+# Install SDK
+
+import openai
+
+openai.api_key = "your-api-key"
+
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a travel guide"},
+        {"role": "user", "content": "Plan me a 3-day trip to Goa"}
+    ]
+)
+
+print(response["choices"][0]["message"]["content"])
+
+##Option 2: Fine-Tune GPT-3.5 or Smaller Models with OpenAI
+	You can upload your data to fine-tune GPT-3.5 for better control.
+🔧 Steps:
+	1. Prepare your dataset (JSONL format).
+	2. Use OpenAI CLI to upload and fine-tune.
+
+
+import streamlit as st
+import openai
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+st.set_page_config(page_title="My GPT Chatbot", layout="centered")
+st.title("🤖 Custom ChatGPT Assistant")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+user_input = st.chat_input("Say something...")
+
+if user_input:
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    st.chat_message("user").write(user_input)
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",  # or "gpt-3.5-turbo"
+        messages=st.session_state.messages
+    )
+
+    reply = response["choices"][0]["message"]["content"]
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    st.chat_message("assistant").write(reply)
+
+
+Final and Run command : 
+"streamlit run chatbot.py"
+
